@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +109,7 @@ public class ServletResponse extends AbstractResponse {
          this.r.addCookie(sc.getWrappedCookie());
          return cookie;
       } else {
-         javax.servlet.http.Cookie c = new javax.servlet.http.Cookie(cookie.getName(), cookie.getValue());
+         jakarta.servlet.http.Cookie c = new jakarta.servlet.http.Cookie(cookie.getName(), cookie.getValue());
          c.setDomain(cookie.getDomain());
          c.setMaxAge(cookie.getExpiry());
          c.setPath(cookie.getPath());
@@ -121,7 +121,7 @@ public class ServletResponse extends AbstractResponse {
    }
 
    public Cookie setCookie(String name, String value) {
-      javax.servlet.http.Cookie c = new javax.servlet.http.Cookie(name, value);
+      jakarta.servlet.http.Cookie c = new jakarta.servlet.http.Cookie(name, value);
       c.setPath("/");
       this.r.addCookie(c);
       return new ServletCookie(c);

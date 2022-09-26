@@ -1,13 +1,13 @@
 package com.bradmcevoy.http;
 
 public class ServletCookie implements Cookie {
-   private final javax.servlet.http.Cookie cookie;
+   private final jakarta.servlet.http.Cookie cookie;
 
-   public ServletCookie(javax.servlet.http.Cookie cookie) {
+   public ServletCookie(jakarta.servlet.http.Cookie cookie) {
       this.cookie = cookie;
    }
 
-   public javax.servlet.http.Cookie getWrappedCookie() {
+   public jakarta.servlet.http.Cookie getWrappedCookie() {
       return this.cookie;
    }
 

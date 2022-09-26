@@ -1,7 +1,7 @@
 package com.bradmcevoy.http;
 
 import java.io.File;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ServletResourceFactory implements ResourceFactory {

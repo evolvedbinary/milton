@@ -5,14 +5,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Map;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.util.*;
+import java.util.function.Supplier;
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 public class ServletResource implements GetableResource {
    private final String localPath;
@@ -103,6 +104,7 @@ public class ServletResource implements GetableResource {
    private class MyResponse extends ServletOutputStream implements HttpServletResponse {
       private final Response response;
       private final OutputStream out;
+      private Supplier<Map<String, String>> trailerFields;
 
       public MyResponse(Response response, OutputStream out) {
          this.response = response;
@@ -239,6 +241,70 @@ public class ServletResource implements GetableResource {
 
       public void write(byte[] b, int off, int len) throws IOException {
          this.out.write(b, off, len);
+      }
+
+      @Override
+      public boolean isReady() {
+         if (out instanceof ServletOutputStream) {
+            return ((ServletOutputStream) out).isReady();
+         }
+         return true;
+      }
+
+      @Override
+      public void setWriteListener(final WriteListener writeListener) {
+         if (out instanceof ServletOutputStream) {
+            ((ServletOutputStream) out).setWriteListener(writeListener);
+         }
+      }
+
+      @Override
+      public int getStatus() {
+         return response.getStatus().code;
+      }
+
+      @Override
+      public String getHeader(final String name) {
+         return response.getHeaders().get(name);
+      }
+
+      @Override
+      public Collection<String> getHeaders(String name) {
+         final List<String> headers = new ArrayList<>();
+         final String header = response.getHeaders().get(name);
+         if (header != null) {
+            headers.add(header);
+         }
+         return headers;
+      }
+
+      @Override
+      public Collection<String> getHeaderNames() {
+         return response.getHeaders().keySet();
+      }
+
+      @Override
+      public void setTrailerFields(final Supplier<Map<String, String>> supplier) {
+         this.trailerFields = supplier;
+      }
+
+      @Override
+      public Supplier<Map<String, String>> getTrailerFields() {
+         return trailerFields;
+      }
+
+      @Override
+      public String getContentType() {
+         return response.getContentTypeHeader();
+      }
+
+      @Override
+      public void setCharacterEncoding(final String charset) {
+      }
+
+      @Override
+      public void setContentLengthLong(final long len) {
+         response.setContentLengthHeader(len);
       }
    }
 }

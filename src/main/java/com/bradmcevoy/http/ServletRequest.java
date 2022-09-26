@@ -1,29 +1,22 @@
 package com.bradmcevoy.http;
 
-import com.bradmcevoy.http.Request.Header;
-import com.bradmcevoy.http.Request.Method;
 import com.bradmcevoy.http.Response.ContentType;
-import com.bradmcevoy.http.upload.MonitoredDiskFileItemFactory;
-import com.bradmcevoy.http.upload.UploadListener;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import java.util.*;
+
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
 
 public class ServletRequest extends AbstractRequest {
    private static final Logger log = LoggerFactory.getLogger(ServletRequest.class);
@@ -111,25 +104,25 @@ public class ServletRequest extends AbstractRequest {
       return this.request.getInputStream();
    }
 
-   public void parseRequestParameters(Map params, Map files) throws RequestParseException {
+   @Override
+   public void parseRequestParameters(Map/*<String, String>*/ params, Map/*<String, PartWrapper>*/ files) throws RequestParseException {
       try {
          if (this.isMultiPart()) {
             log.trace("parseRequestParameters: isMultiPart");
-            UploadListener listener = new UploadListener();
-            MonitoredDiskFileItemFactory factory = new MonitoredDiskFileItemFactory(listener);
-            ServletFileUpload upload = new ServletFileUpload(factory);
-            List items = upload.parseRequest(this.request);
+
+            final Collection<Part> parts = this.request.getParts();
+
             this.parseQueryString(params);
-            Iterator i$ = items.iterator();
+            Iterator i$ = parts.iterator();
 
             while(true) {
                while(i$.hasNext()) {
                   Object o = i$.next();
-                  FileItem item = (FileItem)o;
-                  if (item.isFormField()) {
-                     params.put(item.getFieldName(), item.getString());
+                  Part part = (Part)o;
+                  if (isFormField(part)) {
+                     params.put(part.getName(), getPartContentAsString(part, null));
                   } else {
-                     String itemKey = item.getFieldName();
+                     String itemKey = part.getName();
                      if (files.containsKey(itemKey)) {
                         int count;
                         for(count = 1; files.containsKey(itemKey + count); ++count) {
@@ -138,7 +131,7 @@ public class ServletRequest extends AbstractRequest {
                         itemKey = itemKey + count;
                      }
 
-                     files.put(itemKey, new FileItemWrapper(item));
+                     files.put(itemKey, new PartWrapper(part));
                   }
                }
 
@@ -154,10 +147,33 @@ public class ServletRequest extends AbstractRequest {
             }
 
          }
-      } catch (FileUploadException var12) {
-         throw new RequestParseException("FileUploadException", var12);
       } catch (Throwable var13) {
          throw new RequestParseException(var13.getMessage(), var13);
+      }
+   }
+
+   private static boolean isFormField(final Part part) {
+      return part.getSubmittedFileName() == null;
+   }
+
+   private static String getPartContentAsString(final Part part, @Nullable final String encoding) throws IOException {
+      try (final InputStream is = part.getInputStream()) {
+
+         final byte[] data;
+         final byte[] buf = new byte[16384];
+         try (final ByteArrayOutputStream os = new ByteArrayOutputStream()) {
+            int read = 0;
+            while ((read = is.read(buf)) != 0) {
+               os.write(buf, 0, read);
+            }
+            data = os.toByteArray();
+         }
+
+         if (encoding != null) {
+            return new String(data, encoding);
+         } else {
+            return new String(data);
+         }
       }
    }
 
@@ -226,11 +242,11 @@ public class ServletRequest extends AbstractRequest {
 
    public Cookie getCookie(String name) {
       if (this.request.getCookies() != null) {
-         javax.servlet.http.Cookie[] arr$ = this.request.getCookies();
+         jakarta.servlet.http.Cookie[] arr$ = this.request.getCookies();
          int len$ = arr$.length;
 
          for(int i$ = 0; i$ < len$; ++i$) {
-            javax.servlet.http.Cookie c = arr$[i$];
+            jakarta.servlet.http.Cookie c = arr$[i$];
             if (c.getName().equals(name)) {
                return new ServletCookie(c);
             }
@@ -243,11 +259,11 @@ public class ServletRequest extends AbstractRequest {
    public List getCookies() {
       ArrayList list = new ArrayList();
       if (this.request.getCookies() != null) {
-         javax.servlet.http.Cookie[] arr$ = this.request.getCookies();
+         jakarta.servlet.http.Cookie[] arr$ = this.request.getCookies();
          int len$ = arr$.length;
 
          for(int i$ = 0; i$ < len$; ++i$) {
-            javax.servlet.http.Cookie c = arr$[i$];
+            jakarta.servlet.http.Cookie c = arr$[i$];
             list.add(new ServletCookie(c));
          }
       }

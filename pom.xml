@@ -4,12 +4,17 @@
     <parent>
         <groupId>com.ettrema</groupId>
         <artifactId>milton</artifactId>
-        <version>1.8.1.4</version>
+        <version>1.8.1.4-jakarta5</version>
     </parent>
     <groupId>com.ettrema</groupId>
     <artifactId>milton-servlet</artifactId>
     <packaging>jar</packaging>
     <name>Milton WebDav Servlet Library</name>
+
+    <properties>
+        <spring.version>6.0.0-M6</spring.version>
+    </properties>
+
     <dependencies>
         <!-- this is apparently needed to compile on java5 -->
         <!-- BUT is not available in maven repo. will add to mitlon's repo  -->
@@ -21,9 +26,9 @@
         </dependency>
         -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.3</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>5.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -34,23 +39,25 @@
         <dependency>
             <groupId>com.ettrema</groupId>
             <artifactId>milton-api</artifactId>
-            <version>${project.version}</version>
+            <version>1.8.1.4</version>
         </dependency>
-        <dependency>
-            <groupId>commons-fileupload</groupId>
-            <artifactId>commons-fileupload</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
-            <version>2.5.6</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework</groupId>-->
+<!--            <artifactId>spring</artifactId>-->
+<!--            <version>6.0.0-M6</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>2.5.6</version>
+            <version>${spring.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
     </dependencies>
 </project>
 

@@ -1,12 +1,12 @@
 package com.bradmcevoy.http;
 
 import java.io.IOException;
-import javax.servlet.Servlet;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -31,7 +31,7 @@ public class SpringAwareMiltonServlet implements Servlet {
 
    public static void forward(String url) {
       try {
-         request().getRequestDispatcher(url).forward((javax.servlet.ServletRequest)originalRequest.get(), (javax.servlet.ServletResponse)originalResponse.get());
+         request().getRequestDispatcher(url).forward((jakarta.servlet.ServletRequest)originalRequest.get(), (jakarta.servlet.ServletResponse)originalResponse.get());
       } catch (IOException var2) {
          throw new RuntimeException(var2);
       } catch (ServletException var3) {
@@ -51,7 +51,7 @@ public class SpringAwareMiltonServlet implements Servlet {
       }
    }
 
-   public void service(javax.servlet.ServletRequest servletRequest, javax.servlet.ServletResponse servletResponse) throws ServletException, IOException {
+   public void service(jakarta.servlet.ServletRequest servletRequest, jakarta.servlet.ServletResponse servletResponse) throws ServletException, IOException {
       HttpServletRequest req = (HttpServletRequest)servletRequest;
       HttpServletResponse resp = (HttpServletResponse)servletResponse;
 

@@ -1,12 +1,16 @@
 package com.bradmcevoy.http;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import jakarta.servlet.http.Part;
 
-public class FileItemWrapper implements FileItem {
-   final org.apache.commons.fileupload.FileItem wrapped;
-   final String name;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+public class PartWrapper implements FileItem {
+   final Part wrapped;
+   final String submittedFileName;
+
+   Path tempFile = null;
 
    public static String fixIEFileName(String s) {
       if (s.contains("\\")) {
@@ -17,39 +21,51 @@ public class FileItemWrapper implements FileItem {
       return s;
    }
 
-   public FileItemWrapper(org.apache.commons.fileupload.FileItem wrapped) {
+   public PartWrapper(final Part wrapped) {
       this.wrapped = wrapped;
-      this.name = fixIEFileName(wrapped.getName());
+      this.submittedFileName = fixIEFileName(wrapped.getSubmittedFileName());
    }
 
+   @Override
    public String getContentType() {
       return this.wrapped.getContentType();
    }
 
+   @Override
    public String getFieldName() {
-      return this.wrapped.getFieldName();
+      return this.wrapped.getName();
    }
 
+   @Override
    public InputStream getInputStream() {
       try {
+         if (tempFile != null) {
+            return Files.newInputStream(tempFile);
+         }
          return this.wrapped.getInputStream();
       } catch (IOException var2) {
          throw new RuntimeException(var2);
       }
    }
 
+   @Override
    public OutputStream getOutputStream() {
       try {
-         return this.wrapped.getOutputStream();
+         if (tempFile != null) {
+            this.tempFile = Files.createTempFile(null, null);
+         }
+         return Files.newOutputStream(tempFile);
       } catch (IOException var2) {
          throw new RuntimeException(var2);
       }
    }
 
+   @Override
    public String getName() {
-      return this.name;
+      return this.submittedFileName;
    }
 
+   @Override
    public long getSize() {
       return this.wrapped.getSize();
    }

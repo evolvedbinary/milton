@@ -1,7 +1,7 @@
 package com.bradmcevoy.http;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class MiltonUtils {
    public static String stripContext(HttpServletRequest req) {

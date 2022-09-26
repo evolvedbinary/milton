@@ -37,7 +37,6 @@ public class StaticResource implements GetableResource {
       FileInputStream fis = new FileInputStream(this.file);
       BufferedInputStream bin = new BufferedInputStream(fis);
       byte[] buffer = new byte[1024];
-      int n = false;
 
       int n;
       while(-1 != (n = bin.read(buffer))) {
@@ -90,7 +89,7 @@ public class StaticResource implements GetableResource {
          return null;
       } else {
          String mime = sb.toString();
-         MimeType mt = MimeUtil.getPreferedMimeType(preferredList, mime);
+         mt = MimeUtil.getPreferedMimeType(preferredList, mime);
          return mt.toString();
       }
    }
