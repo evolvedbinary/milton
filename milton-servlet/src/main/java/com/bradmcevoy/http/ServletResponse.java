@@ -51,7 +51,7 @@ public class ServletResponse extends AbstractResponse {
       if (status.text == null) {
          this.r.setStatus(status.code);
       } else {
-         this.r.setStatus(status.code, status.text);
+         this.r.setStatus(status.code);
       }
 
       this.status = status;

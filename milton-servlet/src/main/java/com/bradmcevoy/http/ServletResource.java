@@ -127,14 +127,6 @@ public class ServletResource implements GetableResource {
          return MiltonServlet.response().encodeRedirectURL(url);
       }
 
-      public String encodeUrl(String url) {
-         return MiltonServlet.response().encodeUrl(url);
-      }
-
-      public String encodeRedirectUrl(String url) {
-         return MiltonServlet.response().encodeRedirectUrl(url);
-      }
-
       public void sendError(int sc, String msg) throws IOException {
          throw new UnsupportedOperationException("Not supported yet.");
       }
