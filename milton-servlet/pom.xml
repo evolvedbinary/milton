@@ -9,7 +9,15 @@
 
     <artifactId>milton-servlet</artifactId>
     <packaging>jar</packaging>
+
     <name>Milton WebDav Servlet Library</name>
+    <description>Milton WebDav Servlet</description>
+
+    <scm>
+        <connection>scm:git:https://github.com/evolvedbinary/milton.git</connection>
+        <developerConnection>scm:git:https://github.com/evolvedbinary/milton.git</developerConnection>
+        <url>scm:git:https://github.com/evolvedbinary/milton.git</url>
+    </scm>
 
     <properties>
         <spring.version>6.0.0-M6</spring.version>
@@ -29,11 +37,6 @@
             <scope>provided</scope>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.springframework</groupId>-->
-<!--            <artifactId>spring</artifactId>-->
-<!--            <version>6.0.0-M6</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
